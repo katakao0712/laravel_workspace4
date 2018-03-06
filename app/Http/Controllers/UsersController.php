@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\UserController;
 
 class UsersController extends Controller
 {
@@ -14,7 +16,71 @@ class UsersController extends Controller
         //paginate で10行ごとにページング処理
 
         return view('users.index')->with('users',$users);
-        // 取得したデータは with() を利用し、ビューへ送る。
-        //view('view名')->with('viewでの変数名','実データ');
+        // 取得したデータは with() を利用し、ビューへ送る。view('view名')->with('viewでの変数名','実データ');
     }
+    
+    public function create(){
+        return view('users.create');  
+    }
+    
+    public function store(Request $request){
+      // userオブジェクト生成
+      $user = new User;
+
+      // 値の登録
+      $user->name = $request->name;
+      $user->email = $request->email;
+      $user->password = Hash::make($request->password); // パスワードのハッシュ化
+
+      // 保存
+      $user->save();
+
+      // 一覧にリダイレクト
+      return redirect()->to('/users');
+  }
+  
+   public function show($id){
+    // レコード検索
+    $user = User::find($id);
+    // 検索結果をビューに渡す
+    return view('users.show')->with('user', $user);
+  }
+  
+    public function edit($id){
+        // レコードを検索
+        $user = User::find($id);
+
+        // 検索結果をビューに渡す
+        return view('users.edit')->with('user', $user);
+  }
+    
+      public function update(Request $request, $id){
+      // レコードを検索
+      $user = User::find($id);
+
+      // 値を代入
+      $user->name     = $request->name;
+      $user->email    = $request->email;
+      $user->password = Hash::make($request->password);
+
+      // 保存(更新)
+      $user->save();
+
+      // リダイレクト
+      return redirect()->route('users.show',[$id]);
+  }
+  
+      public function destroy($id)
+    {
+        // 削除対象レコードを検索
+        $user = User::find($id);
+
+        // 削除
+        $user->delete();
+
+        // リダイレクト
+        return redirect()->to('/users');
+    }
+    
+    
 }
