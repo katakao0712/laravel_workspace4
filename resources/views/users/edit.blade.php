@@ -11,7 +11,7 @@
     </div>
 
     <!-- form -->
-    <form method="post" action="/users/{{ $user->id }}">
+    <form method="post" action="/users/{{ $user->id }}" style="width: 1170px; margin:auto;">
         {{ csrf_field() }}
         {{ method_field('PUT') }}
 
